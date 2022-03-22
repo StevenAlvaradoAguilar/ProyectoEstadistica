@@ -1,0 +1,6 @@
+"0","x<-c(161,203,235,176,201,188,228,211,191,178)"
+"0","y<-c(159,206,241,163,197,193,209,189,169,201)"
+"0","sexo <- factor(c(""Hombre"",""Mujer"",""Mujer"",""Hombre"",""Hombre"",""Hombre"",""Mujer"",""Hombre"",""Mujer"",""Mujer""))"
+"0",""
+"0","Datos.Pruebas <- data.frame(Prueba.escrita = x, Prueba.oral = y, Sexo = sexo)"
+"0","Datos.Pruebas"

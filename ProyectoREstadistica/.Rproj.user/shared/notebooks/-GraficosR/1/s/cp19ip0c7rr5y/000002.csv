@@ -1,0 +1,99 @@
+"0","library(visdat) # Paquete con varias herramientas para visualizar datos"
+"0","library(DataExplorer) #Para usar la función plot_missing"
+"2","Registered S3 method overwritten by 'data.table':
+  method           from
+  print.data.table     
+"
+"2","Registered S3 method overwritten by 'htmlwidgets':
+  method           from         
+  print.htmlwidget tools:rstudio
+"
+"0","library(mosaicData) # Paquete que contiene bases de datos "
+"0","library(ggplot2) # paquete graficador de alto desempeño"
+"0","library(colorspace) # Paleta de colores"
+"0","library(dplyr) #para usar funciones de ordenamiento, selección, agrupación"
+"2","
+Attaching package: ‘dplyr’
+
+"
+"2","The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+"
+"2","The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+"
+"0","library(GGally)"
+"2","Registered S3 method overwritten by 'GGally':
+  method from   
+  +.gg   ggplot2
+"
+"0","library(tidyr) # para usar la función drop_na"
+"0","library(PerformanceAnalytics)"
+"2","Loading required package: xts
+"
+"2","Loading required package: zoo
+"
+"2","
+Attaching package: ‘zoo’
+
+"
+"2","The following objects are masked from ‘package:base’:
+
+    as.Date, as.Date.numeric
+
+"
+"2","
+Attaching package: ‘xts’
+
+"
+"2","The following objects are masked from ‘package:dplyr’:
+
+    first, last
+
+"
+"2","
+Attaching package: ‘PerformanceAnalytics’
+
+"
+"2","The following object is masked from ‘package:graphics’:
+
+    legend
+
+"
+"0","library(psych)"
+"2","
+Attaching package: ‘psych’
+
+"
+"2","The following objects are masked from ‘package:ggplot2’:
+
+    %+%, alpha
+
+"
+"0","library(ggraph)"
+"0","library(plotly) #para crear gráficos interactivos"
+"2","
+Attaching package: ‘plotly’
+
+"
+"2","The following object is masked from ‘package:ggplot2’:
+
+    last_plot
+
+"
+"2","The following object is masked from ‘package:stats’:
+
+    filter
+
+"
+"2","The following object is masked from ‘package:graphics’:
+
+    layout
+
+"
+"0","library(datos) # paquete que contienes diferentes bases de datos"
+"0",""

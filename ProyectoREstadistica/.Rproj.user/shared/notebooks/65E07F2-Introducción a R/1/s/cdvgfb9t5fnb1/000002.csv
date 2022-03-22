@@ -1,0 +1,1 @@
+"0","estudiantes <- read.csv2(""Datos/EjemploEstudiantes.csv"", header = T, row.names = 1)"

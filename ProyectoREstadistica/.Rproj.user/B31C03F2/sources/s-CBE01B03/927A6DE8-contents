@@ -1,0 +1,276 @@
+---
+title:  
+  <span style="color:darkblue"> 
+    **Pruebas de hipótesis para dos poblaciones** 
+  </span>
+author: "M.Sc. Esteban Ballestero Alfaro"
+date: '\today'
+output:
+  html_document:
+    theme: flatly
+    highlight: pygments
+    toc: yes
+    collapsed: false
+    toc_depth: 3
+    toc_float: yes
+    smooth_scroll: true
+    number_sections: false
+    df_print: paged
+    code_folding: "hide"
+editor_options: 
+  chunk_output_type: inline
+    
+---
+
+
+
+<div style="text-align: center">
+  ![](Tecnologicos transparente.PNG)
+</div>
+
+<div style="text-align: justify">
+
+# **INTRODUCCIÓN**
+
+En esta sección se estudiará el uso de pruebas de hipótesis para constrastar un mismo parámetro en dos grupos o poblaciones diferentes. 
+
+Para hacer dicho contraste, se dispondrá de una muestra de cada población, las cuáles podría cumplir con alguna de las siguientes condiciones:
+
+* **Muestras independientes:** Las dos muestras se han obtenido de forma independiente. Recordemos que dos eventos son independientes si la probabilidad de uno no afecta la probabilidad del otro.
+
+**EJEMPLO:** Se toma un grupo de hombres y otro de mujeres, se prueba un medidcamento sobre dos muestras de enfermos diferentes, se toma una muestra de estudiantes de un grupo y otra de otro grupo
+
+* **Muestras emparejadas o pareadas:** ocurre cuando las dos muestras corresponden a los mismos individuos.
+
+**EJEMPLO:** se toma nuesta muestra de personas y se estudia su antes y después, se prueban dos medicamento sobre el mismo grupo de enfermos.
+
+De los casos que interesa estudiar están: diferencia de medias, diferencia de proporciones y cociente de varianzas.
+
+Como es de costrumbre al iniciar, se cargarán las librerías a utilizar:
+
+```{r}
+library(MASS)
+```
+
+
+# **CASOS DE DOS POBLACIONES**
+
+## **1.1 Prueba de hipótesis para dos medias poblacionales $\mu _{1}$, $\mu _{2}$** 
+
+<div style="text-align: center">
+  ![](Teoriadifmedias2pob.PNG)
+</div>
+
+En las pruebas de hipótesis para la diferencia de medias, se deben considerar varios casos:
+
+<div style="text-align: center">
+  ![](PHdifmediascasos.PNG)
+</div>
+
+## **1.2 Contraste para dos medias independientes en `R`: función `t.test`**
+
+Para el contraste de dos medias, se usará la fución `t.test` de `R`, cuya sintaxis se presenta a continuación:
+
+```{r eval=FALSE, include=T}
+t.test(x, y, mu=..., alternative=..., conf.level=..., paired=..., 
+       var.equal=..., na.omit=...)
+```
+
+Dónde:
+* `x` es el vector de datos de la primera muestra.
+
+* `y` es el vector de datos de la segunda muestra.
+
+* `alternative` indica si la prueba es de cola izquierda (`less`), derecha (`greater`) o de dos colas (`two.sided`).
+
+* `var.equal` es para indicar que se asumen varianzas iguales (`TRUE` o `T`) o diferentes (`FALSE` o `F`).
+
+**EJEMPLO**
+
+Imaginemos ahora que nos planteamos si la media de la longitud del pétalo es la misma para las flores de las especies setosa y versicolor.
+
+Sea:
+
+$\mu_{s}$ la media de la longitud del pétalo de las flores de la variedad setosa
+
+$\mu_{v}$ la media de la longitud del pétalo de las flores de la variedad versicolor
+
+Para realizar esta prueba, se considerarán las siguientes hipótesis:
+
+
+<div style="text-align: center">
+
+$H_{0}:\mu_{s}-\mu_{v} = 0$
+
+$H_{1}:\mu_{s}-\mu_{v} \neq 0$
+
+</div>
+
+Se trabajará con una muestra de 40 flores de cada especie:
+
+```{r}
+# Se planta la semilla
+set.seed(45)
+
+# Se establecen los índices para la muestra
+flores.elegidas.setosa <- sample(1:50, 40, replace = TRUE)
+flores.elegidas.versicolor <- sample(51:100, 40, replace = TRUE)
+
+# Se extraen las muestras
+
+muestra.setosa <- iris[flores.elegidas.setosa, ]
+muestra.versicolor <- iris[flores.elegidas.versicolor, ]
+
+# Se aplica la prueba de hipótesis
+t.test(muestra.setosa$Petal.Length, muestra.versicolor$Petal.Length, 
+       alternative = "two.sided")
+
+```
+
+El `p-valor` del contraste ha sido prácticamente cero, lo que nos hace que se tenga evidencia suficiente para concluir que las medias de la longitud del pétalo son diferentes para las dos especies.
+
+Además, se observa en el intervalo que este no contiene el valor cero y está totalmente a la izquierda de cero. Por tanto, debemos rechazar la hipótesis nula.
+
+Note que se ha considerado que las varianzas de las dos variables son diferentes y en caso de haberlas considerado como iguales, se debe hacer lo siguiente:
+
+```{r}
+t.test(muestra.setosa$Petal.Length, muestra.versicolor$Petal.Length,
+       alternative="two.sided", var.equal = TRUE)
+```
+
+En este caso, el `p-valor` también es despreciable, por lo que llegamos a la misma conclusión anterior: las medias son diferentes.
+
+Es importante tomar en cuenta que el asumir varianzas iguales no es una decisión que se tome a la ligera, en este caso se requiere que, antes de aplicar la prueba T, se realice una prueba de contraste para las varianzas y dependiendo de su resultado, se procede con la prueba de contraste de medias, asumiendo varianzas iguales o no.
+
+## **2.1 Prueba de hipótesis para dos proporciones $p _{1}$, $p _{2}$** 
+
+<div style="text-align: center">
+  ![](Difprop.PNG)
+</div>
+
+Para las pruebas de contraste de proporciones para muestras grandes, se utilizará la función `prop.test`
+
+
+```{r eval=FALSE, include=T}
+
+prop.test(x, n, p =..., alternative=..., conf.level=...)
+
+```
+
+Dónde:
+
+* `x` en el caso de un constraste de proporciones es el un vector de dos números naturales que representan los éxitos de ambas muestas. 
+
+* `n` en el caso de trabajar con dos muestras, es un vector de dos entradas de sus respectivos tamaños para las muestras. 
+
+* `alternative` y `Conf.level` y sus posibles valores, son los usuales. 
+
+**EJEMPLO**
+
+Se contrastaré si la proporción de madres fumadoras de raza blanca es la misma que la proporción de madres fumadoras de raza negra, en la tabla de datos `birthwt`
+
+Para realizar esta prueba, se considerarán las siguientes hipótesis:
+
+
+<div style="text-align: center">
+
+$H_{0}:p_{b}-p_{n} = 0$
+
+$H_{1}:p_{b}-p_{n} \neq 0$
+
+</div>
+
+```{r}
+# Se revisa primeramente la comporisión de la tabla birthwt
+str(birthwt)
+head(birthwt, 5)
+b <- birthwt
+
+# Se calcula las etiquetas de las madres de cada raza
+madres.raza.blanca <- rownames(birthwt[birthwt$race == 1, ])
+madres.raza.negra <- rownames(birthwt[birthwt$race == 2, ])
+
+# Se eligen las muestras de tamaño 50 para cada raza
+set.seed(2000)
+madres.elegidas.blanca <- sample(madres.raza.blanca, 50, replace = TRUE)
+madres.elegidas.negra <- sample(madres.raza.negra, 50, replace = TRUE)
+muestra.madres.raza.blanca <- birthwt[madres.elegidas.blanca, ]
+muestra.madres.raza.negra <- birthwt[madres.elegidas.negra, ]
+
+# Se calculan cuantas madres fumadoras hay en cada una de las muestras usando la funci[on table y las almacenamos en una nueva variable
+
+table(muestra.madres.raza.blanca$smoke)
+table(muestra.madres.raza.negra$smoke)
+
+# número de madres fumadoras de raza blanca
+x.blanca <- table(muestra.madres.raza.blanca$smoke)[2]
+
+# número de madres fumadoras de raza negra
+x.negra <- table(muestra.madres.raza.negra$smoke)[2] 
+
+# Se hace el contraste de hipótesis
+prop.test(c(x.blanca, x.negra), c(50, 50))
+
+```
+
+El p-valor del contraste ha sido `0.1061` y mayor que `0.1`. Se concluye que no se tiene evidencia para rechazar que las proporciones de madres fumadoras de razas blanca y negra sean iguales.
+
+Si se revisa el IC, se puede ver que el 0 está dentro de dicho intervalo, hecho que reafirma la conclusión anterior.
+
+
+## **3.1 Prueba de hipótesis para dos varianzas $\sigma_{1}^{2}$, $\sigma_{2}^{2}$** 
+
+<div style="text-align: center">
+  ![](EstF.PNG)
+</div>
+
+La función para efectuar este test en `R` es `var.test` y su sintaxis básica es la misma que la de `t.test` para dos muestras, como se muestra a continuación:
+
+```{r eval=FALSE, include=T}
+
+var.test(x, y, alternative=..., conf.level=...)
+
+```
+
+
+Dónde:
+
+* `x` e `y` son los vectores de datos.
+
+* `alternative` y `Conf.level` y sus posibles valores, son los usuales. 
+
+* `null.value` que por defecto es 1 considerando que la relación entre las varianzas es 1. Se puede cambiar si se desea probar otra relación.
+
+
+**EJEMPLO**
+
+Recordemos que cuando se explicó el contraste para dos medias independientes, se contrastó si las medias de las longitudes del pétalo para las especies setosa y versicolor eran iguales o no, pero también se necesitaba saber si las varianzas eran iguales o no, esto como un insumo previo a considerar antes de poder usar la función `t.test`.
+
+Con una prueba de hipótesis para varianzas, se podría tener información para adoptar la condición de igualdad o no de las varianzas. 
+
+Las muestras eran `muestra.setosa` y `muestra.versicolor`.
+
+
+```{r}
+#Se realiza el contraste de varianza
+var.test(muestra.setosa$Petal.Length, muestra.versicolor$Petal.Length)
+
+
+
+```
+
+El `p-valor` del contraste ha sido prácticamente cero, por tanto, se concluye que tiene evidencias suficientes para afirmar que las varianzas de las longitudes del pétalo de las flores de las especies setosa y versicolor son diferentes.
+
+Note que además que, el IC no contiene el valor 1, de hecho está a la izquierda de él. Este hecho reafirma la conclusión anterior.
+
+
+
+
+
+
+
+
+
+
+
+

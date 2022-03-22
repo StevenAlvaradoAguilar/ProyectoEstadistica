@@ -1,0 +1,497 @@
+---
+title: <span style="color:darkblue"> **Construcción de gráficos en R**</span>
+author: "M.Sc. Esteban Ballestero Alfaro"
+date: '\today'
+output:
+  html_document:
+    theme: flatly
+    highlight: pygments
+    toc: yes
+    collapsed: false
+    toc_depth: 3
+    toc_float: yes
+    smooth_scroll: true
+    number_sections: false
+    df_print: paged
+    code_folding: "hide"
+editor_options: 
+  chunk_output_type: inline
+    
+---
+
+<div style="text-align: right">
+  ![](Tecnologico transparente.PNG)
+</div>
+
+<div style="text-align: justify">
+
+# Exploración de datos
+
+Una de las buenas prácticas que se recomienda implementar a la hora de analizar datos, es iniciar haciendo una mirada a estos de manera que desde el inicio, se pueda tener un visión general de la materia prima con la que se pretende trabajar.
+
+## ¿Qué interesa conocer de los datos? 
+
+Cada analista podría definir sus propias prioridades, pero posiblemente se pueda tener un consenso en lo siguiente: tipos de datos, las variables, datos atípicos, celdas vacías, tamaño de la base de datos, estructura general de la base de datos, entre otras.
+
+En R podemos echar mano de varias herramientas exploratorias de consulta o de tipo gráficas, que rápidamente permiten tener ese panorama general.
+
+
+# Una mirada a los datos
+
+Primeramente creamos un primer chunk para cargar los paquetes o librerías de R requeridos para el trabajo con los datos:
+
+
+
+```{r message=FALSE, warning=FALSE}
+library(visdat) # Paquete con varias herramientas para visualizar datos
+library(DataExplorer) #Para usar la función plot_missing
+library(mosaicData) # Paquete que contiene bases de datos 
+library(ggplot2) # paquete graficador de alto desempeño
+library(colorspace) # Paleta de colores
+library(dplyr) #para usar funciones de ordenamiento, selección, agrupación
+library(GGally)
+library(tidyr) # para usar la función drop_na
+library(PerformanceAnalytics)
+library(psych)
+library(ggraph)
+library(plotly) #para crear gráficos interactivos
+library(datos) # paquete que contienes diferentes bases de datos
+
+```
+
+`R` posee algunas bases de datos de uso libre, de las cuáles en esta oportunidad se cargará la base de datos *airquality* la cuál contiene datos ambientales.
+
+En `RStudio` podemos consultar la ayuda si se desea saber información sobre algún paquete, una función o alguna base de datos. La siguiente instrucción permite acceder a la ayuda para conocer cómo está cosntituida la base de datos *airquality*:
+
+```{r}
+?airquality
+```
+
+Se puede ver un resumen sobre como está constituida dicha base de datos con las siguientes indicaciones:
+
+```{r}
+
+head(airquality)
+
+```
+
+
+```{r}
+
+summary(airquality)
+
+```
+
+```{r}
+
+str(airquality)
+
+```
+
+
+
+Usando el paquete visdat, hacemos una exploración gráfica de la base de datos:
+
+```{r}
+
+vis_dat(airquality)
+
+```
+
+```{r}
+
+vis_guess(airquality)
+
+```
+
+```{r}
+
+vis_miss(airquality)
+
+```
+
+
+
+```{r}
+plot_missing(airquality) # Me indica si tenemos datos en blanco y me da una recomendación, que en este caso dice que es "Good y Ok", lo cual no es mucho problema
+# Use ?plot_missing() si desea conocer más sobre esta función
+```
+
+Si se desea, se pueden omitir los datos NA, pero al implicar este procedimiento una modificación de la base de datos original, se recomienda crear una nueva variable de almacenamiento, como se muestra en el siguiente `chunk`:
+
+```{r}
+
+aire <- na.omit(airquality)
+vis_dat(aire)
+
+```
+
+# Atipicidades
+
+Para el estudio de las tipicidades, se echará mano de dos tipos de gráficos del paquete ggplot2: *Diagramas de caja* (**boxplot**) y *gráficos de violín* (**Violinplot**).
+
+El paquete `ggplot2` es uno de los paquetes más completos que tiene `R` para generar gráficos diversos y de alta complejidad y calidad, el cuál trabaja bajo una filosofía de *Grammar of Graphs (Gramática de gráficos)* que permite contruir los gráficos a partir de capas. 
+
+Primeramente se crea el marco de trabajo base (Primera capa), el cuál al contener solo la base de datos cargada, no mostrará ningún elemento visual:
+
+```{r}
+
+ggplot(aire, aes(Month)) 
+
+```
+
+
+Ahora, se agrega una segunda capa de tipo `geom_boxplot`
+
+```{r}
+
+ggplot(aire, aes(Month,Ozone )) +
+  geom_boxplot(alpha = 0.4, color = "blue", aes(group = cut_width(Month, 1)))
+
+
+
+```
+
+En el gráfico anterior se puede notar que en el horizontal aparecen los meses dados por número de mes, pero podría ser interesante verlo con nombre del mes. El siguiente código crea una nueva columna en la base de datos con el nombre del mes
+
+```{r}
+
+aire$Mes <- ifelse(aire$Month == 5, "Mayo", 
+                   ifelse (aire$Month == 6, "Junio", 
+                           ifelse(aire$Month == 7,"Julio", 
+                                  ifelse(aire$Month == 8, "Agosto","Septiembre")
+                                  )
+                           )
+                   )
+
+aire$Mes <- factor(aire$Mes, levels = c("Mayo","Junio","Julio","Agosto","Septiembre"))
+```
+
+Seguidamente crearemos el mismo diagrama de caja, pero usando la nueva columnna
+
+```{r}
+ggplot(aire, aes(Mes, Ozone)) + 
+  geom_boxplot(alpha = 0.4, color = "dodgerblue4", outlier.shape = 19) 
+
+```
+
+
+Los datos atípicos se muestran como puntos fuera de la caja, pero esa forma podría cambiar a gusto del usuario. En el siguiente enlace puede ver un compendio de variantes para la figura que podría usarse para representar los puntos en `R`
+
+[Figuras para puntos ggplot2](https://ggplot2.tidyverse.org/articles/ggplot2-specs.html) 
+
+La siguiente variante del diagrama de caja puede ser más interesante:
+
+```{r}
+
+ggplot(aire, aes(Mes, Ozone)) + 
+  geom_boxplot(alpha = 0.4, color = "dodgerblue4", outlier.shape = 19, outlier.color = "red", aes(fill = Month)) +
+  geom_point(alpha = 0.2)
+
+```
+
+
+```{r}
+
+ggplot(aire, aes(Month, Ozone)) + 
+  geom_boxplot(alpha = 0.4, color = "dodgerblue4", outlier.shape = 19, outlier.color = "red", aes(fill = Mes)) +
+  geom_point(alpha = 0.2)
+
+```
+
+Agreguemos otros elementos importantes en un gráfico, como título:
+
+```{r}
+
+ggplot(aire, aes(Mes, Ozone)) + 
+  geom_boxplot(alpha = 0.4, color = "dodgerblue4", outlier.shape = 19, outlier.color = "red", aes(fill = Month))+
+  labs(title = "Media diaria de Ozono en ppm, por mes", subtitle = "Roosevel Island según mes, del 1 de mayo al 30 de septiembre 1973", y = "Ozono")
+
+```
+
+Otra variante interesante del diagrama de caja que se viene utilizando, es el *gráfico de violín* o *violin plot*, el cuál presenta la ventaja de que permite conocer la distribución de los datos durante el recorrido.
+
+Antes de constuir nuestro primer *violin plot*, podemos simplificar el código almacenando instrucciones de uso frecuente, como seguidamente se muestra:
+
+```{r}
+# g1 es una variables que almacena la primera capa del gráfico a crear
+
+g1 <- ggplot(aire, aes(Mes, Ozone))
+  
+```
+
+Los *violinplot* son un tipo de función de densidad (density plot) para los datos vistos desde arriba. Este gráfico se está prefiriendo sobre el *box plot* porque permite ver en el recorrido la forma en que se agrupan o se concentran los datos. No es necesario, para efectos de publicación, presentarlo junto con la caja.
+
+Seguidamente, se construye el *violin plot*:
+
+```{r}
+g1 + 
+  geom_violin(aes(fill = Month, alpha = 0.3))
+
+```
+Se puede agregar los puntos para verlos superpuestos al violinplot:
+
+```{r}
+
+g1 + 
+  geom_jitter(width = 0.3, alpha = 0.4) +
+    geom_violin(aes(fill = Month, alpha = 0.3))
+
+```
+
+Se puede superponer además con los *box plot*:
+
+```{r}
+
+g1 + 
+  geom_jitter(width = 0.3, alpha = 0.4) + 
+  geom_boxplot(alpha = 0.4, color = "blue") + 
+  geom_violin(aes(alpha = 0.3, fill = Month))
+
+```
+
+En el siguiente código se propone crear algunas estadísticas para los datos agrupados: cantidad de datos, desviación estándar, error estándar y lo límites superior e inferior para el intervalo de confianza para dicha media, con el objetico de incluirlos dentro del gráfico que se viene trabajando.
+
+Para este trabajo se utilizará el operador *pipe* **%>%** que permite crear acciones anidadas:
+
+```{r}
+est <- aire %>%
+  group_by(Mes) %>%
+  summarise(media = mean(Ozone), 
+            n = n(), 
+            de = sd(Ozone),
+            ee = de/sqrt(n()),
+            li = media - 1.96*ee,
+            ls = media +1.96*ee
+            )
+est
+
+```
+
+Se procede a incluir estas nuevas estadísticas al gráfico:
+
+```{r}
+
+g1 + 
+  geom_jitter(width = 0.3, alpha = 0.4) + 
+  geom_boxplot() + 
+  geom_violin(aes(alpha = 0.3, fill = Month)) +
+  theme_minimal() + 
+  geom_point(data = est, aes(Mes, media)) +
+  geom_errorbar(data = est, aes(Mes, media, ymin = li, ymax = ls), width = 0.2, color ="red")
+
+
+```
+
+Tanto los *gráficos* de barras como la variante de estos conocida como *lollipops* podrían ser útiles en el conteo de datos:
+
+```{r}
+
+ggplot(aire, aes(Mes)) + 
+  geom_bar(aes(fill = Month))
+
+```
+
+```{r}
+
+ggplot(aire, aes(Month)) + 
+  geom_bar(aes(fill = Mes))
+
+```
+
+```{r}
+mescont <- aire %>%
+  group_by(Mes) %>%
+  summarize(conteo = n() )
+
+ggplot(mescont, aes(Mes, conteo)) + 
+  geom_col(fill = "steelblue", width = 0.015) + 
+  geom_point(color = "darkorange", size = 5) +
+  geom_text(aes(label = conteo), size = 2)
+
+```
+
+Con el paquete `Plotly` podemos tomar un objeto de `ggplot2`y mediante la función `ggplotly` se le puede dar cierta interactividad al gráfico.
+
+
+```{r}
+graf1 <- ggplot(aire, aes(Month)) + 
+  geom_bar(aes(fill = Mes))
+ggplotly(graf1)
+```
+
+
+```{r}
+lollipops <- ggplot(mescont, aes(Mes, conteo)) + 
+  geom_col(fill = "steelblue", width = 0.015) + 
+  geom_point(color = "darkorange", size = 5) +
+  geom_text(aes(label = conteo), size = 2)
+ggplotly(lollipops)
+```
+
+Seguimoa trabajando con los gráficos de barras, pero ahora con los datos `diamantes` que se encuentra en el paquete `datos`
+
+```{r}
+str(diamantes)
+diamantesdata <- diamantes
+```
+
+```{r}
+
+ggplot(data = diamantesdata) +
+  geom_bar(mapping = aes(x = corte)) # aes: define una variable para la estética
+
+```
+Podemos cambiar el orden de las barras con la función `reorder`
+
+```{r}
+diamantesgrupo <- diamantesdata %>%
+  group_by(corte) %>%
+  summarize(cantidad = n()
+            )
+diamantesgrupo$proporcion <- diamantesgrupo$cantidad/sum(diamantesgrupo$cantidad)
+```
+
+```{r}
+ggplot(data = diamantesgrupo) +
+  geom_bar(mapping = aes(x = reorder(corte, cantidad), y = cantidad) ,stat="identity", position="dodge")
+
+```
+ Cambiando el orden de las barras:
+ 
+```{r}
+ggplot(data = diamantesgrupo) +
+  geom_bar(mapping = aes(x = reorder(corte, -cantidad), y = cantidad) ,stat="identity", position="dodge")
+```
+ 
+ 
+```{r}
+ggplot(data = diamantesgrupo) +
+  geom_bar(mapping = aes(x = reorder(corte, -proporcion), y = proporcion, group = 1) ,stat="identity", position="dodge")
+```
+
+```{r}
+ggplot(data = diamantesgrupo) +
+  geom_bar(mapping = aes(x = reorder(corte, -cantidad), y = cantidad, colour = corte) ,stat="identity", position="dodge")
+```
+
+Note que la instrucción *colour* no colorea el relleno de las barras, sino el borde. Para colorear las barras se debe usar *fill*
+
+```{r}
+ggplot(data = diamantesgrupo) +
+  geom_bar(mapping = aes(x = reorder(corte, -cantidad), y = cantidad, fill = corte) ,stat="identity", position="dodge")
+```
+
+Podemos agregar una tercera variable para el análisis de los datos mediante el *fill*:
+
+```{r}
+ggplot(data = diamantesdata) +
+  geom_bar(mapping = aes(x = corte, fill = color))
+```
+
+El apilamiento se realiza automáticamente mediante el ajuste de posición especificado por el argumento `position`. Se muestra un ejemplo con **position = "jitter"**, pero se le invita a explorar otras opciones para `position`: **"identity", "dodge", "fill", "stack"**
+
+
+```{r}
+ggplot(data = diamantesdata) +
+  geom_bar(mapping = aes(x = corte, fill = color), position = "jitter")
+```
+
+
+
+```{r}
+ggplot(data = diamantes) +
+  geom_bar(mapping = aes(x = corte, fill = color), position = "fill")
+```
+
+Si se desea las barras horrizontales, se agrega la instrucción `coord_flip()` y automáticamente ordena las barras de mayor a menor
+
+```{r}
+ggplot(data = diamantes) +
+  geom_bar(mapping = aes(x = corte, fill = corte), position = "dodge") +
+  coord_flip()
+
+```
+
+En el siguiente modelo con el parámetro `width` se puede eliminar el espacio entre las barras:
+
+```{r}
+bar <- ggplot(data = diamantes) +
+  geom_bar(
+    mapping = aes(x = corte, fill = corte),
+    show.legend = FALSE,
+    width = 1
+  ) +
+  theme(aspect.ratio = 1) +
+  labs(x = NULL, y = NULL)
+bar
+```
+En horizontal:
+
+```{r}
+bar +
+  coord_flip()
+```
+
+ Otra versión interesante de los gráficos de barra, es en coordenadas polares:
+ 
+```{r}
+bar +
+  coord_polar()
+```
+ 
+```{r}
+bar2 <- ggplot(data = diamantes) +
+  geom_bar(mapping = aes(x = corte, fill = color),
+    show.legend = F,
+    width = 0.75) +
+  theme(aspect.ratio = 1) +
+  labs(x = NULL, y = NULL)
+
+bar + coord_flip()
+```
+ 
+```{r}
+bar2 + 
+  coord_polar()
+
+```
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

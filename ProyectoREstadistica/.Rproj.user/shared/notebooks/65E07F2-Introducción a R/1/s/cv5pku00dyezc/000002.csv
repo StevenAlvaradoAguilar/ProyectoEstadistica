@@ -1,0 +1,16 @@
+"0","dat1 <- read_csv2(""Datos/EjemploEstudiantes.csv"")"
+"2","[36mi[39m Using [34m[34m','[34m[39m as decimal and [34m[34m'.'[34m[39m as grouping mark. Use [38;5;251m[48;5;235m[38;5;251m[48;5;235m`read_delim()`[48;5;235m[38;5;251m[49m[39m for more control.
+"
+"2","Missing column names filled in: 'X1' [1]"
+"2","
+[36m--[39m [1m[1mColumn specification[1m[22m [36m--------------------------------------------------------[39m
+cols(
+  X1 = [31mcol_character()[39m,
+  Matematicas = [32mcol_double()[39m,
+  Ciencias = [32mcol_double()[39m,
+  Espanol = [32mcol_double()[39m,
+  Historia = [32mcol_double()[39m,
+  EdFisica = [32mcol_double()[39m
+)
+
+"

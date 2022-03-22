@@ -1,0 +1,13 @@
+"0","data(airquality)"
+"0",""
+"0","# se almacena en una variable para uso posterior"
+"0",""
+"0","calidadaire <- airquality"
+"0","head(calidadaire, 5)"
+"2","Warning in gzfile(file, ""wb"") :"
+"2","
+ "
+"2"," cannot open compressed file 'D:/Universidad/2022/Estadística/ProyectoREstadistica/.Rproj.user/shared/notebooks/-Introducción a R/1/s/cvby1z0bzimtz_t\_rs_rdf_88047827b05.rdf', probable reason 'No such file or directory'
+"
+"2","Error in gzfile(file, ""wb"") : cannot open the connection
+"
