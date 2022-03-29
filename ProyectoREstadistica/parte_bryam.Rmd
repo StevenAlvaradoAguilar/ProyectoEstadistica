@@ -48,27 +48,27 @@ aire<- na.omit(airquality)
 
 **A continuación se presenta un IC de 96% para el promedio del Ozono.**
 
-Se usará una función de R llamada t.test para el cálculo del IC, aplicable en este caso para 1 sola población, pero que cuenta con la posiblidad de usarse para la diferencia de IC de 2 poblaciones.  
+Se usará una función de R llamada z.test del package PASWR2 para el cálculo del IC, aplicable en este caso para 1 sola población, pero que cuenta con la posiblidad de usarse para la diferencia de IC de 2 poblaciones.  
 
 
-Se tomará como hipotesis que la variable sigue una distribución normal, como no se conoce la desviación estandar muestral se utilizará la desviación estandar muestral, se guarda resultado en la variable icz.promedio:
+Se tomará como hipotesis que la variable sigue una distribución normal, como no se conoce la desviación estandar poblacional se utilizará la desviación estandar muestral, se guarda resultado en la variable icz.promedio:
 ```{r}
 
-icz.promedio<-t.test(x = aire$Ozone, conf.level = 0.96)$conf.int
+icz.promedio<-z.test(x = aire$Ozone, sigma.x = sd(aire$Ozone), conf.level = 0.96)$conf.int
 icz.promedio
 ```
 Donde:  
     * **x**: Vector que contiene la muestra de datos  
     * **conf.level**: Nivel de confianza  
     
-Se puede concluir que, con un 96% de probablidad el promedio de la pobación se encuentra en el intervalo \]35.53469, 48.66351[
+Se puede concluir que, con un 96% de probablidad el promedio de la pobación se encuentra en el intervalo \]35.61251, 48.58569[
 
 ## IC distribución t-student
 
 **Acontinuación se presenta un IC de 96% para el promedio del Ozono con una muestra n=25 tomada de forma aleatoria de la variable ozono.**   
-Se usará una función de R llamada t.test para el cálculo del IC, aplicable en este caso para 1 sola población, pero que cuenta con la posiblidad de usarse para la diferencia de IC de 2 poblaciones.
+Se usará una función de R llamada t.test del package stats para el cálculo del IC, aplicable en este caso para 1 sola población, pero que cuenta con la posiblidad de usarse para la diferencia de IC de 2 poblaciones.
 
-Se tomará como hipotesis que la variable sigue una distribución normal y se calculará el IC para el promedio, se guarda resultado en la variable ict.promedio:
+Se tomará como hipotesis que la variable sigue una distribución normal, como no se conoce la desviación estandar poblacional se utilizará la desviación estandar muestral, se guarda resultado en la variable ict.promedio:
 ```{r}
 
 set.seed(2000)
@@ -76,6 +76,8 @@ muestra<- sample(aire$Ozone, 25, replace = T)
 
 ict.promedio<-t.test(x = muestra, conf.level = 0.96)$conf.int
 ict.promedio
+
+mean(muestra)
 
 ```
 Donde:  

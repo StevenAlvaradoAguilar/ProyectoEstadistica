@@ -364,11 +364,11 @@ div.tocify {
 <div id="ic-distribución-z" class="section level2">
 <h2>IC distribución Z</h2>
 <p><strong>A continuación se presenta un IC de 96% para el promedio del Ozono.</strong></p>
-<p>Se usará una función de R llamada t.test para el cálculo del IC, aplicable en este caso para 1 sola población, pero que cuenta con la posiblidad de usarse para la diferencia de IC de 2 poblaciones.</p>
-<p>Se tomará como hipotesis que la variable sigue una distribución normal, como no se conoce la desviación estandar muestral se utilizará la desviación estandar muestral, se guarda resultado en la variable icz.promedio:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>icz.promedio<span class="ot">&lt;-</span><span class="fu">t.test</span>(<span class="at">x =</span> aire<span class="sc">$</span>Ozone, <span class="at">conf.level =</span> <span class="fl">0.96</span>)<span class="sc">$</span>conf.int</span>
+<p>Se usará una función de R llamada z.test del package PASWR2 para el cálculo del IC, aplicable en este caso para 1 sola población, pero que cuenta con la posiblidad de usarse para la diferencia de IC de 2 poblaciones.</p>
+<p>Se tomará como hipotesis que la variable sigue una distribución normal, como no se conoce la desviación estandar poblacional se utilizará la desviación estandar muestral, se guarda resultado en la variable icz.promedio:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>icz.promedio<span class="ot">&lt;-</span><span class="fu">z.test</span>(<span class="at">x =</span> aire<span class="sc">$</span>Ozone, <span class="at">sigma.x =</span> <span class="fu">sd</span>(aire<span class="sc">$</span>Ozone), <span class="at">conf.level =</span> <span class="fl">0.96</span>)<span class="sc">$</span>conf.int</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>icz.promedio</span></code></pre></div>
-<pre><code>## [1] 35.53469 48.66351
+<pre><code>## [1] 35.61251 48.58569
 ## attr(,&quot;conf.level&quot;)
 ## [1] 0.96</code></pre>
 <p>Donde:<br />
@@ -379,8 +379,8 @@ div.tocify {
 <div id="ic-distribución-t-student" class="section level2">
 <h2>IC distribución t-student</h2>
 <p><strong>Acontinuación se presenta un IC de 96% para el promedio del Ozono con una muestra n=25 tomada de forma aleatoria de la variable ozono.</strong><br />
-Se usará una función de R llamada t.test para el cálculo del IC, aplicable en este caso para 1 sola población, pero que cuenta con la posiblidad de usarse para la diferencia de IC de 2 poblaciones.</p>
-<p>Se tomará como hipotesis que la variable sigue una distribución normal y se calculará el IC para el promedio, se guarda resultado en la variable ict.promedio:</p>
+Se usará una función de R llamada t.test del package stats para el cálculo del IC, aplicable en este caso para 1 sola población, pero que cuenta con la posiblidad de usarse para la diferencia de IC de 2 poblaciones.</p>
+<p>Se tomará como hipotesis que la variable sigue una distribución normal, como no se conoce la desviación estandar poblacional se utilizará la desviación estandar muestral, se guarda resultado en la variable ict.promedio:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2000</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>muestra<span class="ot">&lt;-</span> <span class="fu">sample</span>(aire<span class="sc">$</span>Ozone, <span class="dv">25</span>, <span class="at">replace =</span> T)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
