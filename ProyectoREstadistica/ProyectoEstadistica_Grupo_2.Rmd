@@ -3,15 +3,15 @@ title: "ProyectoEstadistica_Grupo_2"
 author: "Steven Alvarado Aguilar"
 date: "3/22/2022"
 output:
-  word_document: default
   html_document: default
+  pdf_document: default
+  word_document: default
 editor_options:
   chunk_output_type: console
 ---
 
 
 ```{r message=FALSE, warning=FALSE}
-
 library(visdat) # Paquete con varias herramientas para visualizar datos
 library(DataExplorer) #Para usar la función plot_missing
 library(mosaicData) # Paquete que contiene bases de datos 
@@ -125,6 +125,8 @@ Consideramos una población de 106 valores de una distribución normal de parám
 set.seed(1012)
 mu = 1.5; sigma = 1; alpha = 0.05
 Poblacion = rnorm(10^6,mu,sigma)
+
+Poblacion
 
 ```
 
