@@ -3,12 +3,6 @@ title: "Primera parte proyecto de Estadística"
 author: "Bryam López"
 date: "28/3/2022"
 output:
-  word_document:
-    toc: yes
-    toc_depth: '3'
-  pdf_document:
-    toc: yes
-    toc_depth: '3'
   html_document:
     theme: flatly
     highlight: pygments
@@ -20,6 +14,12 @@ output:
     number_sections: no
     df_print: paged
     code_folding: hide
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+  word_document:
+    toc: yes
+    toc_depth: '3'
 editor_options:
   chunk_output_type: inline
 ---
@@ -51,14 +51,14 @@ aire<- na.omit(airquality)
 Se usará una función de R llamada t.test para el cálculo del IC, aplicable en este caso para 1 sola población, pero que cuenta con la posiblidad de usarse para la diferencia de IC de 2 poblaciones.  
 
 
-Se tomará como hipotesis que la variable sigue una distribución normal y se calculará el IC para el promedio, se guarda resultado en la variable icz.promedio:
+Se tomará como hipotesis que la variable sigue una distribución normal, como no se conoce la desviación estandar muestral se utilizará la desviación estandar muestral, se guarda resultado en la variable icz.promedio:
 ```{r}
 
 icz.promedio<-t.test(x = aire$Ozone, conf.level = 0.96)$conf.int
 icz.promedio
 ```
 Donde:  
-    * **x**: Vextor que contiene la muestra de datos  
+    * **x**: Vector que contiene la muestra de datos  
     * **conf.level**: Nivel de confianza  
     
 Se puede concluir que, con un 96% de probablidad el promedio de la pobación se encuentra en el intervalo \]35.53469, 48.66351[
@@ -79,7 +79,7 @@ ict.promedio
 
 ```
 Donde:  
-    * **x**: Vextor que contiene la muestra de datos  
+    * **x**: Vector que contiene la muestra de datos  
     * **conf.level**: Nivel de confianza  
     
 Se puede concluir que, con un 96% de probabilidad el promedio de la población se encuentra en el intervalo \]29.33285, 53.62715[
