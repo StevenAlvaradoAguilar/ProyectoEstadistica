@@ -1,0 +1,219 @@
+---
+title: "Parte Steven"
+author: "Steven Alvarado Aguilar"
+date: '2022-03-27'
+output:
+  html_document: default
+  word_document: default
+  pdf_document: default
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+```{r message=FALSE, warning=FALSE}
+
+library(visdat) # Paquete con varias herramientas para visualizar datos
+library(DataExplorer) #Para usar la función plot_missing
+library(mosaicData) # Paquete que contiene bases de datos 
+library(ggplot2) # paquete graficador de alto desempeño
+library(colorspace) # Paleta de colores
+library(dplyr) #para usar funciones de ordenamiento, selección, agrupación
+library(GGally)
+library(tidyr) # para usar la función drop_na
+library(PerformanceAnalytics)
+library(psych)
+library(ggraph)
+library(plotly) #para crear gráficos interactivos
+library(datos) # paquete que contienes diferentes bases de datos
+library(epitools)
+library(EnvStats)
+library(PASWR2)
+library(epitools)
+library(EnvStats)
+library(stests)
+library(PASWR2)
+library(BSDA)
+
+```
+
+  
+```{r}
+
+?airquality
+
+```
+
+Se puede ver un resumen sobre como está constituida dicha base de datos con las siguientes indicaciones:
+
+```{r}
+
+head(airquality)
+
+```
+
+```{r}
+
+summary(airquality)
+
+```
+
+```{r}
+
+str(airquality)
+
+```
+
+Usando el paquete visdat, hacemos una exploración gráfica de la base de datos:
+
+```{r}
+
+vis_dat(airquality)
+
+```
+
+```{r}
+
+vis_guess(airquality)
+
+```
+
+```{r}
+
+vis_miss(airquality)
+
+```
+
+```{r}
+
+plot_missing(airquality) # Me indica si tenemos datos en blanco y me da una recomendación, que en este caso dice que es "Good y Ok", lo cual no es mucho problema
+# Use ?plot_missing() si desea conocer más sobre esta función
+
+```
+
+Si se desea, se pueden omitir los datos NA, pero al implicar este procedimiento una modificación de la base de datos original, se recomienda crear una nueva variable de almacenamiento, como se muestra en el siguiente `chunk`:
+La nueva variable va ser aire
+
+```{r}
+
+aire <- na.omit(airquality)
+vis_dat(aire)
+
+```
+
+```{r}
+
+str(aire)
+
+```
+
+En está parte del código creamos dos variables que son necesarias para la implementación de ellas para las 
+dos poblaciones 
+```{r}
+
+aire.primavera = aire[(aire$Month == 5) | (aire$Month == 6 & aire$Day < 21), ]
+
+```
+
+```{r}
+
+aire.verano = aire[(aire$Month == 6 & aire$Day > 20) | (aire$Month == 7) | 
+                     (aire$Month == 8) | (aire$Month == 9 & aire$Day < 21), ]
+
+```
+
+
+Utilizaremos aire para referirnos a la base de datos airquality sin los campos vacíos que en ella existían
+
+#Diferencia de promedios con Z y T
+
+##Creación de la diferencia de promedios para una distribución normal donde usaremos n >= 30 datos.
+
+Consideramos una población de 111 valores que dividimos en dos una llamada aire.primavera
+y otra llamada aire. verano donde las usaremos para una población y después para dos poblaciones.
+
+Para una población:
+
+```{r}
+
+z.test(x=aire$Temp, sigma.x = 1)
+
+```
+
+Para dos poblaciones:
+
+```{r}
+
+z.test(x=aire.primavera$Temp, y=aire.verano$Temp, sigma.x = 1, sigma.y = 1)
+
+```
+
+
+Creación de la diferencia de promedios para una distribución t-student donde usaremos n >= 30 datos..
+
+Consideramos una población de 111 valores que dividimos en dos una llamada aire.primavera
+y otra llamada aire. verano donde las usaremos para una población y después para dos poblaciones.
+
+Para una población utilizando t-student:
+
+```{r}
+
+set.seed(10)
+muestraPrimavera <- sample(aire.primavera$Temp,29,replace = TRUE)
+str(muestraPrimavera)
+
+poblacionPrimavera <- aire[muestraPrimavera, ]$Temp
+t.test(poblacionPrimavera,conf.level = 0.95)$conf.int
+
+```
+
+Para dos poblaciones utilizando t-student:
+
+```{r}
+
+set.seed(10)
+muestraVerano <- sample(aire.verano$Wind,29,replace = TRUE)
+str(muestraVerano)
+
+poblacionPrimavera <- aire[muestraPrimavera, ]$Wind
+poblacionVerano <- aire[muestraVerano, ]$Wind
+t.test(x=poblacionPrimavera,y=poblacionVerano,conf.level = 0.95)$conf.int
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
