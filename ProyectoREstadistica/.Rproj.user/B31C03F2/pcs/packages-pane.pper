@@ -1,7 +1,0 @@
-{
-    "installOptions": {
-        "installFromRepository": true,
-        "libraryPath": "C:/Users/alvar/Documents/R/win-library/3.5",
-        "installDependencies": true
-    }
-}
